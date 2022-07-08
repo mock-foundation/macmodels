@@ -31,3 +31,4 @@ jobs:
           DATE=$(date +'%m/%d/%Y')
           git add . || true
           git commit -m "Update on ${DATE}" || true
+          git push origin master || true
