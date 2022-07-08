@@ -21,11 +21,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Get MacModelDump
-        run: |
-            git clone https://github.com/phimage/MacModelDump.git
-            cd MacModelDump
+        run: git clone https://github.com/phimage/MacModelDump.git
       - name: Generate the list
-        run: swift run modelappledump json | python3 -m json.tool > ../Sources/MacModels/Resources/models.json
+        run: |
+          cd MacModelDump
+          swift run modelappledump json | python3 -m json.tool > ../Sources/MacModels/Resources/models.json
       - name: Update repo
         run: |
           DATE=$(date +'%m/%d/%Y')
