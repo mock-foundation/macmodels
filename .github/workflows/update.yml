@@ -1,0 +1,33 @@
+name: Update
+
+on:
+  push:
+    branches: [master]
+  schedule:
+  # Basically runs every time WWDC can be ran
+    - cron: '1 * 1 6 *' # At minute 1 on day-of-month 1 in June.
+    - cron: '1 * 13 6 *' # At minute 1 on day-of-month 13 in June.
+    - cron: '1 * 27 6 *' # At minute 1 on day-of-month 27 in June.
+    - cron: '1 * 1 9 *' # At minute 1 on day-of-month 1 in September.
+    - cron: '1 * 13 9 *' # At minute 1 on day-of-month 13 in September.
+    - cron: '1 * 27 9 *' # At minute 1 on day-of-month 27 in September.
+
+  workflow_dispatch:
+
+jobs:
+  Update:
+    runs-on: macos-12
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get MacModelDump
+        run: |
+            git clone https://github.com/phimage/MacModelDump.git
+            cd MacModelDump
+      - name: Generate the list
+        run: swift run modelappledump json | python3 -m json.tool > ../Sources/MacModels/Resources/models.json
+      - name: Update repo
+        run: |
+          DATE=$(date +'%m/%d/%Y')
+          git add . || true
+          git commit -m "Update on ${DATE}" || true
