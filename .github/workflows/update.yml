@@ -28,7 +28,7 @@ jobs:
           swift run modelappledump json | python3 -m json.tool > ../Sources/MacModels/Resources/models.json
       - name: Get the date
         run: |
-          DATE=$(date +'%m.%d.%Y')
+          DATE=$(date +'%Y.%m.%d')
           echo "DATE=$DATE" >> $GITHUB_ENV
       - name: Update repo
         run: |
