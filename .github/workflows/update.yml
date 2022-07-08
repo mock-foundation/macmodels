@@ -26,10 +26,21 @@ jobs:
         run: |
           cd MacModelDump
           swift run modelappledump json | python3 -m json.tool > ../Sources/MacModels/Resources/models.json
+      - name: Get the date
+        run: |
+          DATE=$(date +'%m/%d/%Y')
+          echo "DATE=$DATE" >> $GITHUB_ENV
       - name: Update repo
         run: |
           rm -rf MacModelDump
-          DATE=$(date +'%m/%d/%Y')
           git add . || true
           git commit -m "Update on ${DATE}" || true
           git push origin master || true
+      - name: Release
+        uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
+        with:
+          target_commitish: master
+          tag_name: ${{ env.DATE }}
+          body: "Update made on ${{ env.DATE }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
