@@ -28,6 +28,7 @@ jobs:
           swift run modelappledump json | python3 -m json.tool > ../Sources/MacModels/Resources/models.json
       - name: Update repo
         run: |
+          rm -rf MacModelDump
           DATE=$(date +'%m/%d/%Y')
           git add . || true
           git commit -m "Update on ${DATE}" || true
