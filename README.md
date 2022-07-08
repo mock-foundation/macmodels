@@ -1,3 +1,3 @@
 # MacModels
 
-A description of this package.
+A list of Mac devices with easy-to-use API.
