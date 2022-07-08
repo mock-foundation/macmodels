@@ -12,7 +12,7 @@ public struct MacModels {
     // to init this struct? Like, really 🧐
     private init() { }
     
-    public static func getAllModels() -> [DeviceGroup] {
+    public static func getAllDevices() -> [DeviceGroup] {
         do {
             let json = try String(contentsOf: Bundle.module.url(
                 forResource: "models",
@@ -41,5 +41,17 @@ public struct MacModels {
             print(error)
             return []
         }
+    }
+    
+    public static func getDevice(by id: String) -> Device? {
+        let deviceGroups = getAllDevices()
+        for group in deviceGroups {
+            for device in group.devices {
+                if device.identifiers.contains(id) {
+                    return device
+                }
+            }
+        }
+        return nil
     }
 }

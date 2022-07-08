@@ -2,14 +2,15 @@ import XCTest
 @testable import MacModels
 
 final class MacModelsTests: XCTestCase {
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct
-        // results.
-        let devices = MacModels.getAllModels().first(where: { $0.name == "Mac Mini"})?.devices
-        print(MacModels.getAllModels())
+    func testAllDevices() throws {
+        let devices = MacModels.getAllDevices().first(where: { $0.name == "Mac Mini"})?.devices
         XCTAssertNotNil(devices)
         let emptyModels: [Device] = []
         XCTAssertNotEqual(devices!, emptyModels)
+    }
+    
+    func testDevice() throws {
+        let device = MacModels.getDevice(by: "MacBookPro13,1")
+        XCTAssertEqual(device?.modelName, "MacBook Pro (13-inch, 2016, Two Thunderbolt 3 ports)")
     }
 }
