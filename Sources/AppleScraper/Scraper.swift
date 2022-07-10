@@ -12,29 +12,35 @@ import SwiftSoup
 
 public struct Scraper {
     static let models = [
-        ModelInfo("macMini", "https://support.apple.com/en-us/HT201894", "https://support.apple.com/specs/macmini", "Mac mini"),
-        ModelInfo("iMac", "https://support.apple.com/en-us/HT201634", "https://support.apple.com/mac/imac", "iMac"),
-        ModelInfo("macPro", "https://support.apple.com/en-us/HT202888", "https://support.apple.com/mac/mac-pro", "Mac Pro"),
-        ModelInfo("macBook", "https://support.apple.com/en-us/HT201608", "https://support.apple.com/mac/macbook", "MacBook"),
-        ModelInfo("macBookAir", "https://support.apple.com/en-us/HT201862", "https://support.apple.com/mac/macbook-air", "MacBook Air"),
-        ModelInfo("macBookPro", "https://support.apple.com/en-us/HT201300", "https://support.apple.com/mac/macbook-pro", "MacBook Pro"),
-        ModelInfo("macStudio", "https://support.apple.com/en-us/HT213073", "https://support.apple.com/mac/mac-studio", "Mac Studio")
+        ModelInfo(
+            name: "Mac mini",
+            supportURL: "https://support.apple.com/en-us/HT201894",
+            specsURL: "https://support.apple.com/specs/macmini"),
+        ModelInfo(
+            name: "iMac",
+            supportURL: "https://support.apple.com/en-us/HT201634",
+            specsURL: "https://support.apple.com/mac/imac"),
+        ModelInfo(
+            name: "Mac Pro",
+            supportURL: "https://support.apple.com/en-us/HT202888",
+            specsURL: "https://support.apple.com/mac/mac-pro"),
+        ModelInfo(
+            name: "MacBook",
+            supportURL: "https://support.apple.com/en-us/HT201608",
+            specsURL: "https://support.apple.com/mac/macbook"),
+        ModelInfo(
+            name: "MacBook Air",
+            supportURL: "https://support.apple.com/en-us/HT201862",
+            specsURL: "https://support.apple.com/mac/macbook-air"),
+        ModelInfo(
+            name: "MacBook Pro",
+            supportURL: "https://support.apple.com/en-us/HT201300",
+            specsURL: "https://support.apple.com/mac/macbook-pro"),
+        ModelInfo(
+            name: "Mac Studio",
+            supportURL: "https://support.apple.com/en-us/HT213073",
+            specsURL: "https://support.apple.com/mac/mac-studio")
     ]
-    
-    public static func renderer(for string: String) -> Renderer.Type {
-        switch string {
-            case "devicekit":
-                return DeviceKitRenderer.self
-            case "markdown":
-                return MarkdownRenderer.self
-            case "human", "emoji":
-                return HumanRenderer.self
-            case "json":
-                return JSONRenderer.self
-            default:
-                return HumanRenderer.self
-        }
-    }
     
     public static func models(for string: String) -> [ModelInfo] {
         let allModels = Scraper.models
@@ -44,24 +50,23 @@ public struct Scraper {
         let modelStrings = string.split(separator: ",")
         
         return modelStrings.compactMap {
-            for aModel in allModels {
-                if aModel.model.lowercased() == $0.lowercased() {
-                    return aModel
+            for model in allModels {
+                if model.name.lowercased() == $0.lowercased() {
+                    return model
                 }
             }
             return nil
         }
     }
     
-    public static func run(renderer rendererString: String, type: String) -> String {
-        let renderer = Scraper.renderer(for: rendererString)
+    public static func scrape(for type: String) async -> String {
         let models = Scraper.models(for: type)
         
         var result = ""
         
         result = result + renderer.header()
         for (index, model) in models.enumerated() {
-            let (data, response, error) = URLSession.shared.synchronousDataTask(with: model.url)
+            let (data, response, error) = URLSession.shared.synchronousDataTask(with: model.supportURL)
             guard let dataUnwrapped = data, let html = String(data: dataUnwrapped, encoding: .utf8)  else {
                 print("\(String(describing: error)), \(String(describing: response))")
                 // XXX will make json not valid, maybe send error to renderer

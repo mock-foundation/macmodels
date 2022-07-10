@@ -24,7 +24,7 @@ public struct MacModels {
             json = Scraper.run(renderer: "json", type: "all")
         }
                 
-        let data = try JSONDecoder().decode(JSONRoot.self, from: json.data(using: .utf8)!)
+        let data = try JSONDecoder().decode(DTORoot.self, from: json.data(using: .utf8)!)
         
         return data.models.map { group in
             DeviceGroup(
