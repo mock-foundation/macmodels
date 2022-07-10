@@ -12,6 +12,7 @@ let package = Package(
         .watchOS(.v6)
     ],
     products: [
+        .executable(name: "update", targets: ["UpdateModelsCommand"]),
         .library(
             name: "MacModels",
             targets: ["MacModels"]),
@@ -28,6 +29,9 @@ let package = Package(
         .target(
             name: "AppleScraper",
             dependencies: ["SwiftSoup"]),
+        .executableTarget(
+            name: "UpdateModelsCommand",
+            dependencies: ["AppleScraper"]),
         .testTarget(
             name: "MacModelsTests",
             dependencies: ["MacModels"]),
