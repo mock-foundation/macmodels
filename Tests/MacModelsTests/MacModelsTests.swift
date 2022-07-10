@@ -2,11 +2,18 @@ import XCTest
 @testable import MacModels
 
 final class MacModelsTests: XCTestCase {
-    func testAllDevices() throws {
-        let devices = MacModels.getAllDevices().first(where: { $0.name == "Mac Mini"})?.devices
+    func testAllLocalDevices() throws {
+        let devices = try MacModels.getAllDevices(locally: true).first(where: { $0.name == "Mac mini"})?.devices
         XCTAssertNotNil(devices)
         let emptyModels: [Device] = []
         XCTAssertNotEqual(devices!, emptyModels)
+    }
+    
+    func testAllRemoteDevices() throws {
+        let devices = try MacModels.getAllDevices().first(where: { $0.name == "Mac mini"})?.devices
+        XCTAssertNotNil(devices)
+        let emptyModels: [Device] = []
+        XCTAssertNotEqual(devices ?? [], emptyModels)
     }
     
     func testDevice() throws {

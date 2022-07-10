@@ -16,15 +16,18 @@ let package = Package(
             name: "MacModels",
             targets: ["MacModels"]),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.2.2")
+    ],
     targets: [
         .target(
             name: "MacModels",
-            dependencies: [],
-            resources: [
-                .copy("Resources/models.json")
-            ]
+            dependencies: ["AppleScraper"],
+            resources: [.copy("Resources/models.json")]
         ),
+        .target(
+            name: "AppleScraper",
+            dependencies: ["SwiftSoup"]),
         .testTarget(
             name: "MacModelsTests",
             dependencies: ["MacModels"]),
