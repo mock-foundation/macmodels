@@ -7,9 +7,10 @@
 
 import Foundation
 
-public struct ModelInfo {
+public struct DeviceGroup {
     var name: String
     var supportURL, specsURL: URL
+    var devices: 
     
     init(name: String, supportURL: String, specsURL: String) {
         self.name = name

@@ -8,5 +8,5 @@
 public struct Device {
     var name, kb, shortName: String
     var identifier: [String]
-    var image, modelName: String
+    var image: String
 }
