@@ -20,12 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Get MacModelDump
-        run: git clone https://github.com/phimage/MacModelDump.git
-      - name: Generate the list
-        run: |
-          cd MacModelDump
-          swift run modelappledump json | python3 -m json.tool > ../Sources/MacModels/Resources/models.json
+      - name: Update models.json
+        run: swift run update
       - name: Get the date
         run: |
           DATE=$(date +'%Y.%m.%d')
@@ -34,7 +30,7 @@ jobs:
         run: |
           rm -rf MacModelDump
           git add . || true
-          git commit -m "Update on ${DATE}" || true
+          git commit -m "Update made on ${DATE}" || true
           git push origin master || true
       - name: Release
         uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
