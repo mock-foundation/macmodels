@@ -8,46 +8,47 @@
 //
 
 import Foundation
+import SharedModels
 import SwiftSoup
 
 public struct Scraper {
     static let deviceGroups = [
         DeviceGroup(
             name: "Mac mini",
-            supportURL: "https://support.apple.com/en-us/HT201894",
-            specsURL: "https://support.apple.com/specs/macmini"),
+            supportURL: URL(string: "https://support.apple.com/en-us/HT201894")!,
+            specsURL: URL(string: "https://support.apple.com/specs/macmini")!),
         DeviceGroup(
             name: "iMac",
-            supportURL: "https://support.apple.com/en-us/HT201634",
-            specsURL: "https://support.apple.com/mac/imac"),
+            supportURL: URL(string: "https://support.apple.com/en-us/HT201634")!,
+            specsURL: URL(string: "https://support.apple.com/mac/imac")!),
         DeviceGroup(
             name: "Mac Pro",
-            supportURL: "https://support.apple.com/en-us/HT202888",
-            specsURL: "https://support.apple.com/mac/mac-pro"),
+            supportURL: URL(string: "https://support.apple.com/en-us/HT202888")!,
+            specsURL: URL(string: "https://support.apple.com/mac/mac-pro")!),
         DeviceGroup(
             name: "MacBook",
-            supportURL: "https://support.apple.com/en-us/HT201608",
-            specsURL: "https://support.apple.com/mac/macbook"),
+            supportURL: URL(string: "https://support.apple.com/en-us/HT201608")!,
+            specsURL: URL(string: "https://support.apple.com/mac/macbook")!),
         DeviceGroup(
             name: "MacBook Air",
-            supportURL: "https://support.apple.com/en-us/HT201862",
-            specsURL: "https://support.apple.com/mac/macbook-air"),
+            supportURL: URL(string: "https://support.apple.com/en-us/HT201862")!,
+            specsURL: URL(string: "https://support.apple.com/mac/macbook-air")!),
         DeviceGroup(
             name: "MacBook Pro",
-            supportURL: "https://support.apple.com/en-us/HT201300",
-            specsURL: "https://support.apple.com/mac/macbook-pro"),
+            supportURL: URL(string: "https://support.apple.com/en-us/HT201300")!,
+            specsURL: URL(string: "https://support.apple.com/mac/macbook-pro")!),
         DeviceGroup(
             name: "Mac Studio",
-            supportURL: "https://support.apple.com/en-us/HT213073",
-            specsURL: "https://support.apple.com/mac/mac-studio")
+            supportURL: URL(string: "https://support.apple.com/en-us/HT213073")!,
+            specsURL: URL(string: "https://support.apple.com/mac/mac-studio")!)
     ]
     
-    public static func deviceGroup(for string: String) -> [DeviceGroup] {
+    public static func deviceGroup(for models: String) -> [DeviceGroup] {
         let allModels = Scraper.deviceGroups
-        if string.isEmpty || string == "all" {
+        if models.isEmpty || models == "all" {
             return allModels
         }
-        let modelStrings = string.split(separator: ",")
+        let modelStrings = models.split(separator: ",")
         
         return modelStrings.compactMap {
             for model in allModels {
@@ -59,13 +60,13 @@ public struct Scraper {
         }
     }
     
-    public static func scrape(for type: String) async throws -> String {
-        let models = Scraper.deviceGroup(for: type)
+    public static func scrape(for model: String) async throws -> [DeviceGroup] {
+        let models = Scraper.deviceGroup(for: model)
         
         var result: [DeviceGroup] = []
         
-        for (index, model) in models.enumerated() {
-            let (data, response) = try await URLSession.shared.data(from: model.supportURL)
+        for (_, model) in models.enumerated() {
+            let (data, _) = try await URLSession.shared.data(from: model.supportURL)
             guard let html = String(data: data, encoding: .utf8) else {
                 continue
             }
@@ -107,21 +108,24 @@ public struct Scraper {
                         
                         let device = Device(
                             name: modelName,
-                            kb: linkHref,
                             shortName: model.name,
-                            identifier: identifiers,
-                            image: image)
+                            specsURL: URL(string: linkHref)!,
+                            imageURL: URL(string: image)!,
+                            identifiers: identifiers)
                         
-                        if !device.identifier.isEmpty, !devices.contains(where: { return $0.name == device.name}) {
+                        if !device.identifiers.isEmpty, !devices.contains(where: { return $0.name == device.name}) {
                             devices.append(device)
                         }
                     }
                 }
             }
             
-            result.append(DeviceGroup(name: model.name, supportURL: <#T##String#>, specsURL: <#T##String#>))
+            result.append(DeviceGroup(
+                name: model.name,
+                supportURL: model.supportURL,
+                specsURL: model.specsURL,
+                devices: devices))
         }
-        result = result + renderer.footer()
         
         return result
     }

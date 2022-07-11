@@ -21,14 +21,15 @@ let package = Package(
         .package(url: "https://github.com/scinfu/SwiftSoup.git", from: "2.2.2")
     ],
     targets: [
+        .target(name: "SharedModels"),
         .target(
             name: "MacModels",
-            dependencies: ["AppleScraper"],
+            dependencies: ["AppleScraper", "SharedModels"],
             resources: [.copy("Resources/models.json")]
         ),
         .target(
             name: "AppleScraper",
-            dependencies: ["SwiftSoup"]),
+            dependencies: ["SwiftSoup", "SharedModels"]),
         .executableTarget(
             name: "UpdateModelsCommand",
             dependencies: ["AppleScraper"]),

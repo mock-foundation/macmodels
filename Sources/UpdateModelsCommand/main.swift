@@ -9,8 +9,11 @@ import Foundation
 import AppleScraper
 
 let modelsFileURL = URL(fileURLWithPath: "Sources/MacModels/Resources/models.json")
+let encoder = JSONEncoder()
+encoder.outputFormatting = .prettyPrinted
 
-let newContents = Scraper.run(renderer: "json", type: "all")
+let scraped = try await Scraper.scrape(for: "all")
+let newContents = try encoder.encode(scraped)
 
-try newContents.write(to: modelsFileURL, atomically: true, encoding: .utf8)
+try newContents.write(to: modelsFileURL, options: .atomic)
 

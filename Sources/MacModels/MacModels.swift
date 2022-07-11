@@ -6,46 +6,45 @@
 //
 
 import Foundation
+import SharedModels
 import AppleScraper
 
 public struct MacModels {
     // Deliberately private because for what you want
     // to init this struct? Like, really 🧐
     private init() { }
+    
+    public static func getAllDevicesLocally() throws -> [DeviceGroup] {
+        let json = try String(contentsOf: Bundle.module.url(
+            forResource: "models",
+            withExtension: "json"
+        )!)
         
-    public static func getAllDevices(locally: Bool = false) throws -> [DeviceGroup] {
-        var json = ""
-        if locally {
-            json = try String(contentsOf: Bundle.module.url(
-                forResource: "models",
-                withExtension: "json"
-            )!)
-        } else {
-            json = Scraper.run(renderer: "json", type: "all")
-        }
-                
-        let data = try JSONDecoder().decode(DTORoot.self, from: json.data(using: .utf8)!)
+        let groups = try JSONDecoder().decode([DeviceGroup].self, from: json.data(using: .utf8)!)
         
-        return data.models.map { group in
-            DeviceGroup(
-                name: group.name,
-                url: group.url,
-                alternativeURL: group.alternativeURL,
-                devices: group.devices.map { device in
-                    Device(
-                        modelName: device.modelName,
-                        name: device.name,
-                        shortName: device.shortName,
-                        kb: device.kb,
-                        image: device.image,
-                        identifiers: device.identifiers.components(separatedBy: ",\u{00a0}")
-                    )
-                })
-        }
+        return groups
+    }
+        
+    /// Fetches device list from the Apple Support website.
+    public static func getAllDevices() async throws -> [DeviceGroup] {
+        return try await Scraper.scrape(for: "all")
     }
     
-    public static func getDevice(by id: String) -> Device? {
-        let deviceGroups = try? getAllDevices()
+    public static func getDeviceLocally(by id: String) -> Device? {
+        let deviceGroups = try? getAllDevicesLocally()
+        guard let deviceGroups = deviceGroups else { return nil }
+        for group in deviceGroups {
+            for device in group.devices {
+                if device.identifiers.contains(id) {
+                    return device
+                }
+            }
+        }
+        return nil
+    }
+    
+    public static func getDevice(by id: String) async -> Device? {
+        let deviceGroups = try? await getAllDevices()
         guard let deviceGroups = deviceGroups else { return nil }
         for group in deviceGroups {
             for device in group.devices {
