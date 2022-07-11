@@ -110,7 +110,7 @@ public struct Scraper {
                             name: modelName,
                             shortName: model.name,
                             specsURL: URL(string: linkHref)!,
-                            imageURL: URL(string: image)!,
+                            imageURL: URL(string: "https://support.apple.com" + image)!,
                             identifiers: identifiers)
                         
                         if !device.identifiers.isEmpty, !devices.contains(where: { return $0.name == device.name}) {

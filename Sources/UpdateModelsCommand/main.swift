@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SharedModels
 import AppleScraper
 
 let modelsFileURL = URL(fileURLWithPath: "Sources/MacModels/Resources/models.json")
@@ -16,4 +17,3 @@ let scraped = try await Scraper.scrape(for: "all")
 let newContents = try encoder.encode(scraped)
 
 try newContents.write(to: modelsFileURL, options: .atomic)
-
