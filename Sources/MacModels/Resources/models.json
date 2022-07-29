@@ -464,6 +464,15 @@
     "devices" : [
       {
         "identifiers" : [
+          "Mac14,2"
+        ],
+        "imageURL" : "https:\/\/support.apple.com\/library\/content\/dam\/edam\/applecare\/images\/en_US\/macbook\/2022-macbook-air-m2-colors.png",
+        "name" : "MacBook Air (M2, 2022)",
+        "shortName" : "MacBook Air",
+        "specsURL" : "https:\/\/support.apple.com\/kb\/SP869"
+      },
+      {
+        "identifiers" : [
           "MacBookAir10,1"
         ],
         "imageURL" : "https:\/\/support.apple.com\/library\/content\/dam\/edam\/applecare\/images\/en_US\/macbookair\/macbook-air-2020-late-device.jpg",
