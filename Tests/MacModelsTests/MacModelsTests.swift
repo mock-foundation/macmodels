@@ -3,21 +3,22 @@ import XCTest
 
 final class MacModelsTests: XCTestCase {
     func testAllLocalDevices() throws {
-        let devices = try MacModels.getAllDevices(locally: true).first(where: { $0.name == "Mac mini"})?.devices
+        let devices = try MacModels.getAllDevicesLocally().first(where: { $0.name == "Mac mini"})?.devices
         XCTAssertNotNil(devices)
         let emptyModels: [Device] = []
         XCTAssertNotEqual(devices!, emptyModels)
     }
     
-    func testAllRemoteDevices() throws {
-        let devices = try MacModels.getAllDevices().first(where: { $0.name == "Mac mini"})?.devices
+    func testAllRemoteDevices() async throws {
+        let devices = try await MacModels.getAllDevicesOnline().first(where: { $0.name == "Mac mini"})?.devices
         XCTAssertNotNil(devices)
         let emptyModels: [Device] = []
         XCTAssertNotEqual(devices ?? [], emptyModels)
     }
     
-    func testDevice() throws {
-        let device = MacModels.getDevice(by: "MacBookPro13,1")
-        XCTAssertEqual(device?.modelName, "MacBook Pro (13-inch, 2016, Two Thunderbolt 3 ports)")
+    func testDevice() async throws {
+        let device = await MacModels.getDevice(by: "MacBookPro13,1")
+        XCTAssertEqual(device?.name, "MacBook Pro (13-inch, 2016, Two Thunderbolt 3 ports)")
+    }
     }
 }
