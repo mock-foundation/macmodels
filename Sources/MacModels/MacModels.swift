@@ -8,6 +8,7 @@
 import Foundation
 import SharedModels
 import AppleScraper
+@_exported import SharedModels
 
 public struct MacModels {
     // Deliberately private because for what you want
