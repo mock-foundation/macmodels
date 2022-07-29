@@ -20,5 +20,19 @@ final class MacModelsTests: XCTestCase {
         let device = await MacModels.getDevice(by: "MacBookPro13,1")
         XCTAssertEqual(device?.name, "MacBook Pro (13-inch, 2016, Two Thunderbolt 3 ports)")
     }
+    
+    func testNonExistentDevice() async {
+        let device = await MacModels.getDevice(by: "nonexistent")
+        XCTAssertEqual(device, nil)
+    }
+    
+    func testNonExistentDeviceOnline() async {
+        let device = await MacModels.getDeviceOnline(by: "nonexistent")
+        XCTAssertEqual(device, nil)
+    }
+    
+    func testNonExistentDeviceLocally() throws {
+        let device = MacModels.getDeviceLocally(by: "nonexistent")
+        XCTAssertEqual(device, nil)
     }
 }
