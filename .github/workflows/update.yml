@@ -22,7 +22,7 @@ jobs:
         run: |
           swift run update
           git add . || true
-      - name: Push changes
+      - name: Push changes (if there are any)
         run: |
           GIT_STATUS="$(git status -s)"
           if [[ $var =~ " M Sources/MacModels/Resources/models.json" ]]; then
@@ -30,12 +30,12 @@ jobs:
               git push origin master || true
               echo "MAKE_RELEASE=1" >> $GITHUB_ENV
           else
-              echo "\nThere is nothing to update"
+              echo "There is nothing to update"
               echo "MAKE_RELEASE=0" >> $GITHUB_ENV
           fi
       - name: Release
         uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
-        if: env.MAKE_RELEASE == 0
+        if: env.MAKE_RELEASE == 1
         with:
           target_commitish: master
           tag_name: ${{ env.DATE }}
