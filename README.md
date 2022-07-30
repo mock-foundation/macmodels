@@ -2,7 +2,7 @@
 
 A list of Mac devices with easy-to-use API.
 
-This project is using [MacModelDump](https://github.com/phimage/MacModelScraper)'s 
+This project is using [MacModelDump](https://github.com/phimage/MacModelDump)'s 
 code for the internal Apple Support website scraper, to power the fetching of devices
 from the web. 
 
