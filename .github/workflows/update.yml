@@ -4,13 +4,7 @@ on:
   push:
     branches: [master]
   schedule:
-  # Basically runs every time WWDC can be ran
-    - cron: '1 * 1 6 *' # At minute 1 on day-of-month 1 in June.
-    - cron: '1 * 13 6 *' # At minute 1 on day-of-month 13 in June.
-    - cron: '1 * 27 6 *' # At minute 1 on day-of-month 27 in June.
-    - cron: '1 * 1 9 *' # At minute 1 on day-of-month 1 in September.
-    - cron: '1 * 13 9 *' # At minute 1 on day-of-month 13 in September.
-    - cron: '1 * 27 9 *' # At minute 1 on day-of-month 27 in September.
+    - cron: '41 9 */10 * *' # At 09:41 on every 10th day-of-month.
 
   workflow_dispatch:
 
@@ -20,20 +14,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Update models.json
-        run: swift run update
       - name: Get the date
         run: |
           DATE=$(date +'%Y.%m.%d')
           echo "DATE=$DATE" >> $GITHUB_ENV
-      - name: Update repo
+      - name: Update models.json
         run: |
-          rm -rf MacModelDump
+          swift run update
           git add . || true
-          git commit -m "Update made on ${DATE}" || true
-          git push origin master || true
+      - name: Push changes
+        run: |
+          GIT_STATUS="$(git status -s)"
+          if [[ $var =~ " M Sources/MacModels/Resources/models.json" ]]; then
+              git commit -m "Update made on ${DATE}" || true
+              git push origin master || true
+              echo "MAKE_RELEASE=1" >> $GITHUB_ENV
+          else
+              echo "\nThere is nothing to update"
+              echo "MAKE_RELEASE=0" >> $GITHUB_ENV
+          fi
       - name: Release
         uses: softprops/action-gh-release@9729932bfb75c05ad1f6e3a729294e05abaa7001
+        if: env.MAKE_RELEASE == 0
         with:
           target_commitish: master
           tag_name: ${{ env.DATE }}
