@@ -22,6 +22,8 @@ jobs:
         run: |
           swift run update
           git add . || true
+      - name: Run tests
+        run: swift test
       - name: Push changes (if there are any)
         run: |
           GIT_STATUS="$(git status -s)"
